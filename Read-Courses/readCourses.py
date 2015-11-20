@@ -12,16 +12,20 @@ register(APPLICATION_ID, REST_API_KEY)
 
 def parseMeetString(meetString):
 	m, t, w, r, f = 0, 0, 0, 0, 0
-	meetString = meetString.split(" ", 2)
-	if meetString[0].find("M")
+	meetString = str.split(str(meetString))
+	if len(meetString) > 3:
+		for i in range(3, len(meetString)):
+			meetString[2] = meetString[2] + ' ' + meetString[i]
+	meetString = meetString[:3]
+	if meetString[0].find("M"):
 		m = 1
-	if meetString[0].find("T")
+	if meetString[0].find("T"):
 		t = 1
-	if meetString[0].find("W")
+	if meetString[0].find("W"):
 		w = 1
-	if meetString[0].find("R")
+	if meetString[0].find("R"):
 		r = 1
-	if meetString[0].find("F")
+	if meetString[0].find("F"):
 		f = 1
 	time = meetString[1][:13]
 	startTime, endTime = time.split('-')
@@ -39,7 +43,7 @@ with open('doc.json') as data_file:
 data_to_upload = []
 for course in range(len(data)):
 	current = data[course]
-	if current['Term'] == '20151' && current['Meets1'] != '':
+	if current['Term'] == '20151' and current['Meets1'] != '' and 'RTBA' not in str(current['Meets1']):
 		if current['DivisionCode'] == 'CC' or current['DivisionName'] == 'SCH OF ENGR & APP SCI: UGRAD' or current['DivisionCode'] == 'BC' or current['DivisionCode'] == 'GS':
 				newClass = ParseObject()
 				newClass.class_code = current['Course']
@@ -49,6 +53,7 @@ for course in range(len(data)):
 				newClass.days, newClass.startTime, newClass.endTime, newClass.building, newClass.roomNumber = parseMeetString(current['Meets1'])
 				data_to_upload.append(newClass)
 
+print "x"
 batcher = ParseBatcher()
 for x in range(0, len(data_to_upload), 50):
-	batcher.batch_save(data_to_upload[x: (x+50) < len(data_to_upload) ? x+50 : len(data_to_upload)])
+	batcher.batch_save(data_to_upload[x: x+50 if (x+50) < len(data_to_upload) else len(data_to_upload)])
